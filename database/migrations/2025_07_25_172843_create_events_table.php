@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
-            $table->string('name');
-            $table->string('image_path');
-            $table->date('event_date');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade')->nullable();
+            $table->foreignId('category_id')->constrained()->onDelete('cascade')->nullable();
+            $table->string('name')->nullable();
+            $table->string('image_path')->nullable();
+            $table->date('event_date')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
