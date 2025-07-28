@@ -98,12 +98,11 @@ class EventController extends Controller
     // Update event (with optional image upload)
     public function update(Request $request, $id)
     {   
+        
         $event = Event::find($id);
-
         if (!$event) {
             return response()->json(['error' => 'Event not found'], 404);
         }
-
         $validator = Validator::make($request->all(), [
             'user_id'     => 'sometimes|required|exists:users,id',
             'category_id' => 'sometimes|required|exists:categories,id',
@@ -122,9 +121,10 @@ class EventController extends Controller
             if ($event->image_path && Storage::disk('public')->exists($event->image_path)) {
                 Storage::disk('public')->delete($event->image_path);
             }
-
+            $imagePath = $request->file('image_path')->store('events', 'public');
             // Store new image
-            $event->image_path = $request->file('image_path')->store('events', 'public');
+            // $event->image_path = $request->file('image_path')->store('events', 'public');
+            $event->image_path = $imagePath;
         }
 
         // Format event date if provided
@@ -138,8 +138,10 @@ class EventController extends Controller
         }
 
         // Fill other fields except image_path and event_date
-        // $event->fill($request->except(['image_path', 'event_date']));
-
+        //$event->fill($request->except(['user_id', 'image_path', 'event_date']));
+        $event->name = $request->name;
+        $event->user_id = $request->user_id;
+        $event->category_id = $request->category_id;
         $event->save(); // Save changes
 
         return response()->json($event);
